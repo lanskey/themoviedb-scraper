@@ -1,0 +1,22 @@
+{
+  "name": "zxresult-scrapper",
+  "version": "0.0.1",
+  "description": "get movies",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Emanuel Slotwinski",
+  "license": "ISC",
+  "devDependencies": {
+    "debug": "^2.4.3",
+    "mocha": "^3.2.0",
+    "mongoose": "^4.7.2"
+  },
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "lodash": "^4.17.2",
+    "nodemon": "^1.11.0",
+    "request": "^2.79.0"
+  }
+}
