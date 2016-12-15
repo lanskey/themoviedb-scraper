@@ -10,6 +10,7 @@
     "chai": true,
     "request": true,
     "it": true,
-    "describe": true
+    "describe": true,
+    "supertest": true
   }
 }

@@ -4,12 +4,15 @@
   "description": "get movies",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "cross-env NODE_ENV=test nodemon server.js",
+    "test": "mocha --recursive --ui bdd spec src/**/*.test.js"
   },
   "author": "Emanuel Slotwinski",
   "license": "ISC",
   "devDependencies": {
     "chai": "^3.5.0",
+    "chai-as-promised": "^6.0.0",
+    "cross-env": "^3.1.3",
     "debug": "^2.4.3",
     "eslint-config-standard": "^6.2.1",
     "eslint-config-standard-jsx": "^3.2.0",
@@ -19,7 +22,9 @@
     "eslint-plugin-standard": "^2.0.1",
     "mocha": "^3.2.0",
     "mongoose": "^4.7.2",
-    "standart": "^6.1.0"
+    "nodemon": "^1.11.0",
+    "standart": "^6.1.0",
+    "supertest": "^2.0.1"
   },
   "dependencies": {
     "body-parser": "^1.15.2",
