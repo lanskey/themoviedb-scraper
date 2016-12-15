@@ -1,5 +1,5 @@
 {
-  "extends": "standart",
+  "extends": "standard",
   "env": {
     "node": true,
     "mocha": true,
