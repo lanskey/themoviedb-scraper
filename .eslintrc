@@ -4,5 +4,12 @@
     "node": true,
     "mocha": true,
     "es6": true
+  },
+  "globals": {
+    "expect": true,
+    "chai": true,
+    "request": true,
+    "it": true,
+    "describe": true
   }
 }
