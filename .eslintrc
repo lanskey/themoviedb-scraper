@@ -11,6 +11,11 @@
     "request": true,
     "it": true,
     "describe": true,
-    "supertest": true
+    "supertest": true,
+    "faker": true,
+    "fake": true,
+    "fakeMulti": true,
+    "nock": true,
+    "api": true
   }
 }
