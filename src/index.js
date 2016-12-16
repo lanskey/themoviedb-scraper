@@ -14,16 +14,6 @@ const callForMovies = function (url, cb) {
       cb(err)
     }
   })
-  // request
-  //   .get(url)
-  //   .end((err, res) => {
-  //     if (!err) {
-  //       const { results } = res.body
-  //       cb(null, results)
-  //     } else {
-  //       cb(err)
-  //     }
-  //   })
 }
 
 module.exports = {

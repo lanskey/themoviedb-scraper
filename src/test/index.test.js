@@ -1,5 +1,5 @@
 const { callForMovies } = require('../index')
-const { baseUrl, endpoint, apiKey, route } = require('../constants/api')
+const { route } = require('../constants/api')
 
 describe('Download movie', () => {
   describe('callForMovies', () => {
