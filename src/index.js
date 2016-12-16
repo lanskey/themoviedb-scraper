@@ -7,12 +7,7 @@ const request = require('request')
 
 const callForMovies = function (url, cb) {
   request(url, (err, res, body) => {
-    if (!err) {
-      const test = JSON.parse(body)
-      cb(null, test.results)
-    } else {
-      cb(err)
-    }
+    !err ? cb(null, JSON.parse(body)) : cb(err)
   })
 }
 
