@@ -4,7 +4,7 @@
   "description": "get movies",
   "main": "server.js",
   "scripts": {
-    "start": "cross-env NODE_ENV=test nodemon server.js",
+    "start": "cross-env NODE_ENV=test NODE_PATH=. nodemon server.js",
     "test": "mocha --recursive --ui bdd spec src/**/*.test.js"
   },
   "author": "Emanuel Slotwinski",

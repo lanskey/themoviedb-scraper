@@ -1,5 +1,17 @@
-module.exports = function (url, cb) {
-  request(url, (err, res, body) => {
-    !err ? cb(null, JSON.parse(body)) : cb(err)
+const request = require('request')
+const logger = require('utils/helpers')
+
+function callApi (url) {
+  return new Promise((resolve, reject) => {
+    request(url, (err, res, body) => {
+      if (!err) {
+        logger.info('request made')
+        resolve(null, JSON.parse(body))
+      } else {
+        reject(err)
+      }
+    })
   })
 }
+
+module.exports = callApi

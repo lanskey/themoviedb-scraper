@@ -20,7 +20,11 @@ describe('Download movie', () => {
     })
 
     it('Should store values in upper scope variable', () => {
-
+      const expected = callApi(route, (err, { results }) => {
+        expect(err).to.eql(null)
+        return results
+      })
+      expect(expected).to.have.length(20)
     })
   })
 })
