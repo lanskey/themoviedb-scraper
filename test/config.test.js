@@ -4,7 +4,7 @@ const fakerLib = require('faker')
 const chaiAsPromised = require('chai-as-promised')
 const requestLib = require('request')
 const superTestLib = require('supertest')
-const { apiConst } = require('./constants/api')
+const { apiConst } = require('src/constants/api')
 
 chaiLib.use(chaiAsPromised)
 

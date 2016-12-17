@@ -1,30 +1,35 @@
-const callApi = require('../../services/callApi')
-const { route } = require('../../constants/api')
-const { resultsResponse } = require('../fake-responses')
+const { endpoint, baseUrl } = require('src/constants/api')
+
+const callApi = require('../callApi')
+const { resultsResponse } = require('./fake-response')
 
 describe('Download movie', () => {
   describe('callApi', () => {
+    let url
     beforeEach(() => {
-      nock('http://api.themoviedb.org/3')
-        .get('/discover/movie?api_key=9dee05d48efe51f51b15cc63b1fee3f5')
+      url = `${baseUrl}${endpoint}`
+      nock(baseUrl)
+        .get(endpoint)
         .reply(200, resultsResponse)
     })
-    it('Should return an array of movies', (done) => {
-      callApi(route, (err, { results }) => {
-        expect(err).to.eql(null)
-        expect(Array.isArray(results)).to.eql(true)
-        expect(results).to.have.length.above(1)
-
-        done()
-      })
+    it('Should return an array of movies', () => {
+      return callApi(url)
+        .then(({ results }) => {
+          expect(Array.isArray(results)).to.eql(true)
+          expect(results).to.have.length.above(1)
+        })
     })
 
-    it('Should store values in upper scope variable', () => {
-      const expected = callApi(route, (err, { results }) => {
-        expect(err).to.eql(null)
-        return results
-      })
-      expect(expected).to.have.length(20)
+    it('Should handle 429 status code as error', () => {
+      nock(baseUrl)
+        .get(endpoint)
+        .replyWithError({ 'message': 'something awful happened', 'code': '429' })
+
+      return callApi(baseUrl)
+        .then(({ results }) => {
+          expect(Array.isArray(results)).to.eql(true)
+          expect(results).to.have.length.above(1)
+        })
     })
   })
 })
