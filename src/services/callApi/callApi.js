@@ -12,8 +12,7 @@ function callApi (url) {
         reject(new Error(`Failed to make request`))
       }
 
-      logger.info(`${getDate()} API request, status: ${res.statusCode}`)
-
+      logger.info(`${getDate()} API has been done, status: ${res.statusCode}`)
       resolve(JSON.parse(body))
     })
   })
