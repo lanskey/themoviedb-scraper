@@ -1,5 +1,3 @@
 const callApi = require('./callApi')
 
-module.exports = {
-  callApi
-}
+module.exports = callApi

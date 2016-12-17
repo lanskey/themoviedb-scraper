@@ -5,5 +5,5 @@
 // TODO: Add logger, helper for handling errors, helmet, monitoring tool
 
 // TODO: Create config for this project, it should handle base project information using envs.
-require('./src')
-
+const app = require('./src')
+app()
