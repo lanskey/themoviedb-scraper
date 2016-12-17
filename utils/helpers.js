@@ -1,4 +1,5 @@
 const winston = require('winston')
+const moment = require('moment')
 
 const logger = new winston.Logger({
   transports: [
@@ -7,4 +8,11 @@ const logger = new winston.Logger({
   ]
 })
 
-module.exports = logger
+const getDate = function () {
+  return moment().format('DD MMM YYYY: HH:MM:SS')
+}
+
+module.exports = {
+  logger,
+  getDate
+}

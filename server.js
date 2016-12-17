@@ -4,7 +4,6 @@
 // https://www.codementor.io/mattgoldspink/tutorials/nodejs-best-practices-du1086jja - just node best pracice
 // TODO: Add logger, helper for handling errors, helmet, monitoring tool
 
-const log = require('./utils/helpers')
-const app = require('./src/index')
+// TODO: Create config for this project, it should handle base project information using envs.
+require('./src')
 
-app()
