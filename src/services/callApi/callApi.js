@@ -5,11 +5,11 @@ function callApi (url) {
   return new Promise((resolve, reject) => {
     request(url, (err, res, body) => {
       if (err) {
-        reject(new Error('Failed to make request, status code: ' + res.statusCode))
+        reject(new Error(err))
       }
 
       if (res.statusCode < 200 || res.statusCode > 299) {
-        reject(new Error('Failed to load page, status code: ' + res.statusCode))
+        reject(new Error(`Failed to make request`))
       }
 
       logger.info(`${getDate()} API request, status: ${res.statusCode}`)
