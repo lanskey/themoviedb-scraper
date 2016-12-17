@@ -9,6 +9,7 @@ describe('Download movie', () => {
     beforeEach(() => {
       url = `${baseUrl}${endpoint}`
     })
+
     it('Should return an array of movies', () => {
       nock(baseUrl)
         .get(endpoint)
