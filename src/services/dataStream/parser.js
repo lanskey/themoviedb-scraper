@@ -1,3 +1,6 @@
+// Klasa to logiczny zbior funkcji(metod) i danych (proporcji)
+// klasa to "cos"
+
 const events = require('events')
 const eventEmitter = new events.EventEmitter()
 const nodemon = require('nodemon')

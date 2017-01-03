@@ -9,10 +9,10 @@ function runtime () {
   // TODO: Attach custom uri keys to limit movies page limit, we should estimate parameters to met max of 1000 page per set(of filters)
 
 
-  getMovies.emit('getMovies')
-  getMovies.on('getMoviesCompleted', () => {
-    console.log('get movies 1')
-  })
+  // getMovies.emit('getMovies')
+  // getMovies.on('getMoviesCompleted', () => {
+  //   console.log('get movies 1')
+  // })
 }
 
 module.exports = runtime
