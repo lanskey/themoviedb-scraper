@@ -1,13 +1,5 @@
-var events = require('events');
-var eventEmitter = new events.EventEmitter();
+// Klasa to logiczny zbior funkcji(metod) i danych (proporcji)
+// klasa to "cos"
+const getMovies = require('./parser')
 
-var ringBell = function ringBell()
-{
-  console.log('no to zajebiscie stary, teraz mozemy je zapisac albo uruchomic ta funkcje raz jeszcze');
-}
-
-eventEmitter.on('dataDownloaded', ringBell)
-
-
-
-module.exports = eventEmitter
+module.exports = getMovies
