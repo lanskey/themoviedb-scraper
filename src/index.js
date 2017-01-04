@@ -1,5 +1,4 @@
-const getMovies = require('./services/dataStream')
-const getMoviesSecond = require('./services/dataStream')
+const DataStream = require('./services/dataStream')
 
 function runtime () {
   // TODO: run callApi multiple times by the time we reach some limit
@@ -8,8 +7,12 @@ function runtime () {
   // TODO: Prepare a .log file which will contain downloaded movie titles
   // TODO: Attach custom uri keys to limit movies page limit, we should estimate parameters to met max of 1000 page per set(of filters)
 
-  const instance = getMovies().stream()
-  instance.emit('data')
+  const instance = DataStream().stream()
+  instance.on('data', function (data) {
+    console.log(data)
+  })
+
+  instance.emit('get')
 }
 
 module.exports = runtime

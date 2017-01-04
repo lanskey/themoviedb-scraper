@@ -35,7 +35,8 @@ describe('DataStream', () => {
   describe('Methods', () => {
     describe('stream', () => {
       // what i want achieve?
-      // 1. it should emit 'done' event, when msg were displayed
+      // 1. it should emit 'data' event, when msg were displayed
+      // 1. it should emit 'done' event, when limit were reached
       // 2. it should emit 'error' when display couldn't be finished
       // 3. it should display messages until reach limit, if limit were specified
       let stream
@@ -49,14 +50,12 @@ describe('DataStream', () => {
         expect(stream).to.be.instanceof(EventEmitter)
       })
 
-      it('it should console.log msg each time receiving "data" event', () => {
-        sinon.stub(console, 'log')
+      it('it should emit "data" event, when msg were displayed', () => {
+        const eventSpy = sinon.spy()
+        stream.on('data', eventSpy)
 
-        stream.emit('data')
-        expect(console.log.calledOnce).to.eql(true)
-
-        stream.emit('data')
-        expect(console.log.calledTwice).to.eql(true)
+        stream.emit('get')
+        expect(eventSpy.calledOnce).to.eql(true)
       })
     })
   })
