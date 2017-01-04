@@ -1,10 +1,2 @@
-// Klasa to logiczny zbior funkcji(metod) i danych (proporcji)
-// klasa to "cos"
+// What this file should do?
 
-class DataStream {
-  constructor() {
-
-  }
-}
-
-module.exports = DataStream

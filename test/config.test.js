@@ -5,6 +5,7 @@ const chaiAsPromised = require('chai-as-promised')
 const requestLib = require('request')
 const superTestLib = require('supertest')
 const { apiConst } = require('src/constants/api')
+const sinionLib = require('sinon')
 
 chaiLib.use(chaiAsPromised)
 
@@ -16,6 +17,7 @@ global.fake = fakerLib.fake
 global.faker = fakerLib
 global.nock = nockLib
 global.api = apiConst
+global.sinon = sinionLib
 
 const generateMultipleFakeData = function (base, length = 10) {
   const temp = []
