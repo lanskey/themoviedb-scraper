@@ -57,6 +57,13 @@ describe('DataStream', () => {
         expect(eventSpy.calledOnce).to.eql(true)
       })
 
+      it('it should console.log msg each time receiving "data" event', () => {
+        sinon.stub(console, 'log')
+
+        stream.emit('get')
+        expect(console.log.calledOnce).to.eql(true)
+      })
+
       it('it should emit "done" event, when limit were reached', () => {
         const limit = 5
         client = DataStream({limit})

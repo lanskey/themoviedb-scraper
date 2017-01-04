@@ -18,6 +18,7 @@ DataStream.prototype.stream = function () {
   const stream = new EventEmitter()
 
   stream.on('get', () => {
+    console.log('Hello get stream')
     stream.emit('data', {data: 'test'})
   })
 
