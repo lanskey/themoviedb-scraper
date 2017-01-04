@@ -14,11 +14,23 @@ function DataStream (options) {
 }
 
 DataStream.prototype.stream = function () {
+  const { options: { limit } } = this
   const stream = new EventEmitter()
-
+  let counter = 0
   stream.on('get', () => {
     stream.emit('data', {data: 'test'})
   })
+
+  if (_.isNumber(limit)) {
+    stream.on('data', () => {
+      counter += 1
+      if (counter === limit) {
+        stream.emit('end')
+      } else {
+        stream.emit('get')
+      }
+    })
+  }
 
   return stream
 }

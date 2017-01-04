@@ -36,8 +36,7 @@ describe('DataStream', () => {
     describe('stream', () => {
       // what i want achieve?
       // 1. it should emit 'data' event, when msg were displayed
-      // 1. it should emit 'done' event, when limit were reached
-      // 2. it should emit 'error' when display couldn't be finished
+      // 2. it should emit 'end' event, when limit were reached
       // 3. it should display messages until reach limit, if limit were specified
       let stream
       let client
@@ -56,6 +55,23 @@ describe('DataStream', () => {
 
         stream.emit('get')
         expect(eventSpy.calledOnce).to.eql(true)
+      })
+
+      it('it should emit "done" event, when limit were reached', () => {
+        const limit = 5
+        client = DataStream({limit})
+        stream = client.stream()
+
+        const dataSpy = sinon.spy()
+        stream.on('data', dataSpy)
+
+        const doneSpy = sinon.spy()
+        stream.on('end', doneSpy)
+
+        stream.emit('get')
+
+        expect(doneSpy.calledOnce).to.eql(true)
+        expect(dataSpy.callCount).to.eql(limit)
       })
     })
   })
