@@ -16,7 +16,7 @@ function DataStream (options) {
 DataStream.prototype.stream = function () {
   const stream = new EventEmitter()
 
-  stream.on('display', () => {
+  stream.on('data', () => {
     console.log('hello world')
   })
 
