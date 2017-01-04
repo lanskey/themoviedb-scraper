@@ -1,3 +1,3 @@
-const getMovies = require('./dataStream')
+const dataStream = require('./dataStream')
 
-module.exports = getMovies
+module.exports = dataStream
