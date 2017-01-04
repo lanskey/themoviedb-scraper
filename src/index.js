@@ -8,11 +8,6 @@ function runtime () {
   // TODO: Prepare a .log file which will contain downloaded movie titles
   // TODO: Attach custom uri keys to limit movies page limit, we should estimate parameters to met max of 1000 page per set(of filters)
 
-
-  // getMovies.emit('getMovies')
-  // getMovies.on('getMoviesCompleted', () => {
-  //   console.log('get movies 1')
-  // })
   const instance = getMovies().stream()
   instance.emit('display')
 }

@@ -7,7 +7,7 @@ describe('DataStream', () => {
     beforeEach(() => {
       defaults = {
         apiKey: null,
-        limit: 3,
+        limit: null,
         url: 'http://api.themoviedb.org/3',
         endPoint: '/discover/movie'
       }
@@ -30,22 +30,30 @@ describe('DataStream', () => {
       const result = Object.assign(defaults, newOptions)
       expect(client.options).to.be.eql(result)
     })
+  })
 
-    it('should have stream method, which is instance of eventEmitter', () => {
-      const client = DataStream().stream()
-      expect(client).to.be.instanceof(EventEmitter)
+  describe('Methods', () => {
+    describe('stream', () => {
+      // what i want achieve?
+      // 1. it should emit 'done' event, when msg were displayed
+      // 2. it should emit 'error' when display couldn't be finished
+      // 3. it should display messages until reach limit, if limit were specified
+
+      it('should have stream method, which is instance of eventEmitter', () => {
+        const client = DataStream()
+        expect(client.stream()).to.be.instanceof(EventEmitter)
+      })
+
+      it('it should console.log msg each time receiving "display" event', () => {
+        const client = DataStream()
+        sinon.stub(console, 'log')
+
+        client.stream().emit('display')
+        expect(console.log.calledOnce).to.eql(true)
+
+        client.stream().emit('display')
+        expect(console.log.calledTwice).to.eql(true)
+      })
     })
-    
-    it('it should console.log msg each time receiving "display" event', () => {
-      const client = DataStream().stream()
-      sinon.stub(console, 'log')
-
-      client.emit('display')
-      expect(console.log.calledOnce).to.eql(true)
-
-      client.emit('display')
-      expect(console.log.calledTwice).to.eql(true)
-    })
-    
   })
 })
