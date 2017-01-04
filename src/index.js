@@ -13,8 +13,8 @@ function runtime () {
   // getMovies.on('getMoviesCompleted', () => {
   //   console.log('get movies 1')
   // })
-  const instance = getMovies()
-  instance.stream.emit('display')
+  const instance = getMovies().stream()
+  instance.emit('display')
 }
 
 module.exports = runtime
