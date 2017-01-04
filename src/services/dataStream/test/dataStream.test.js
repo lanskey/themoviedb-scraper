@@ -64,7 +64,8 @@ describe('DataStream', () => {
         expect(console.log.calledOnce).to.eql(true)
       })
 
-      it('it should emit "done" event, when limit were reached', () => {
+      // TODO: Refactor this async test, it should omit the setTimeout and use differ technique
+      it('it should emit "done" event, when limit were reached', (done) => {
         const limit = 5
         client = DataStream({limit})
         stream = client.stream()
@@ -77,8 +78,11 @@ describe('DataStream', () => {
 
         stream.emit('get')
 
-        expect(doneSpy.calledOnce).to.eql(true)
-        expect(dataSpy.callCount).to.eql(limit)
+        setTimeout(() => {
+          expect(dataSpy.callCount).to.eql(limit)
+          expect(doneSpy.calledOnce).to.eql(true)
+          done()
+        }, 50)
       })
     })
   })

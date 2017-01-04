@@ -29,13 +29,13 @@ DataStream.prototype.stream = function () {
   return stream
 }
 
-DataStream.prototype._reachCallLimit = function(stream) {
+DataStream.prototype._reachCallLimit = function (stream) {
   const { options: { limit } } = this
 
   let counter = 0
   stream.on('data', () => {
     counter += 1
-    counter === limit ? stream.emit('end') : stream.emit('get')
+    counter === limit ? stream.emit('end') : setImmediate(() => stream.emit('get'))
   })
 }
 
