@@ -22,18 +22,20 @@ DataStream.prototype.stream = function () {
   })
 
   if (_.isNumber(limit)) {
-    let counter = 0
-    stream.on('data', () => {
-      counter += 1
-      if (counter === limit) {
-        stream.emit('end')
-      } else {
-        stream.emit('get')
-      }
-    })
+    this._reachCallLimit(stream)
   }
 
   return stream
+}
+
+DataStream.prototype._reachCallLimit = function(stream) {
+  const { options: { limit } } = this
+
+  let counter = 0
+  stream.on('data', () => {
+    counter += 1
+    counter === limit ? stream.emit('end') : stream.emit('get')
+  })
 }
 
 module.exports = DataStream
