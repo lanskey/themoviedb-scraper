@@ -1,7 +1,7 @@
 const DataStream = require('./services/dataStream')
 
 function runtime () {
-  // TODO: run callApi multiple times by the time we reach some limit
+  // TODO: Implement callApi func so we call an api each time on stream
   // TODO: validate X-RateLimit-Remaining header and if > 0, run another 'callApi', else wait appropriate amount of time returned by
   // X-RateLimit-Reset header
   // TODO: Prepare a .log file which will contain downloaded movie titles
@@ -9,7 +9,7 @@ function runtime () {
 
   const instance = DataStream({limit: 3}).stream()
   instance.on('data', function (data) {
-    console.log(data)
+    console.log('how many tiems')
   })
 
   instance.emit('get')

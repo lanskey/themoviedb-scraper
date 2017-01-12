@@ -12,10 +12,10 @@ function callApi (url) {
       const camelCasedBody = camelcaseKeys(parsedBody)
 
       if (res.statusCode < 200 || res.statusCode > 299) {
-        reject(new Error(`Failed to make request: ${camelCasedBody.statusMessage}`))
+        reject(new Error(`Failed to make request: ${res.statusCode}`))
       }
 
-      resolve(JSON.parse(body))
+      resolve(camelCasedBody)
     })
   })
 }

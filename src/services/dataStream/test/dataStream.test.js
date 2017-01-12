@@ -1,5 +1,7 @@
-const EventEmitter = require('events').EventEmitter
 const DataStream = require('../dataStream')
+const callApi = require('src/services/callApi')
+const EventEmitter = require('events').EventEmitter
+const { endpoint, baseUrl } = require('src/constants/api')
 
 describe('DataStream', () => {
   describe('Constructor', () => {
@@ -24,7 +26,7 @@ describe('DataStream', () => {
     })
 
     it('instance should extend default options with custom options', () => {
-      const newOptions = {apiKey: 'test'}
+      const newOptions = { apiKey: 'test' }
       const client = DataStream(newOptions)
 
       const result = Object.assign(defaults, newOptions)
@@ -40,49 +42,54 @@ describe('DataStream', () => {
       // 3. it should display messages until reach limit, if limit were specified
       let stream
       let client
+      let limit
       beforeEach(() => {
         client = DataStream()
         stream = client.stream()
+
+        nock(baseUrl)
+          .get(endpoint)
+          .query(true)
+          .reply(200, { results: [ {} ] })
       })
 
       it('should have stream method, which is instance of eventEmitter', () => {
         expect(stream).to.be.instanceof(EventEmitter)
       })
 
-      it('it should emit "data" event, when msg were displayed', () => {
-        const eventSpy = sinon.spy()
-        stream.on('data', eventSpy)
+      it('should emit "data" event, when data were received', (done) => {
+        stream.on('data', (data) => {
+          expect(data.results.length).to.eql(1)
+          done()
+        })
 
         stream.emit('get')
-        expect(eventSpy.calledOnce).to.eql(true)
       })
 
-      it('it should console.log msg each time receiving "data" event', () => {
-        sinon.stub(console, 'log')
+      it('should callApi each time when we receive "get"', () => {
+        const _requestUrl = sinon.stub(DataStream.prototype, '_requestUrl')
 
+        expect(_requestUrl.calledOnce).to.eql(false)
         stream.emit('get')
-        expect(console.log.calledOnce).to.eql(true)
+        expect(_requestUrl.calledOnce).to.eql(true)
+
+        _requestUrl.restore()
       })
 
-      // TODO: Refactor this async test, it should omit the setTimeout and use differ technique
-      it('it should emit "done" event, when limit were reached', (done) => {
-        const limit = 5
-        client = DataStream({limit})
+      it('should emit "done" event, when limit were reached', (done) => {
+        limit = 2
+        client = DataStream({ limit })
         stream = client.stream()
 
-        const dataSpy = sinon.spy()
-        stream.on('data', dataSpy)
+        const spyGet = sinon.spy()
+        stream.on('get', spyGet)
 
-        const doneSpy = sinon.spy()
-        stream.on('end', doneSpy)
+        stream.on('end', () => {
+          expect(spyGet.callCount).to.eql(limit)
+          done()
+        })
 
         stream.emit('get')
-
-        setTimeout(() => {
-          expect(dataSpy.callCount).to.eql(limit)
-          expect(doneSpy.calledOnce).to.eql(true)
-          done()
-        }, 50)
       })
     })
   })
