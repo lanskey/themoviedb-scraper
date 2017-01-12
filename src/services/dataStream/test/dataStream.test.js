@@ -1,5 +1,4 @@
 const DataStream = require('../dataStream')
-const callApi = require('src/services/callApi')
 const EventEmitter = require('events').EventEmitter
 const { endpoint, baseUrl } = require('src/constants/api')
 
@@ -36,10 +35,6 @@ describe('DataStream', () => {
 
   describe('Methods', () => {
     describe('stream', () => {
-      // what i want achieve?
-      // 1. it should emit 'data' event, when msg were displayed
-      // 2. it should emit 'end' event, when limit were reached
-      // 3. it should display messages until reach limit, if limit were specified
       let stream
       let client
       let limit
