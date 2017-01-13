@@ -17,6 +17,8 @@ function DataStream (options) {
     endPoint: '/discover/movie',
     url: `http://api.themoviedb.org/3/discover/movie?api_key=9dee05d48efe51f51b15cc63b1fee3f5`
   }, options)
+
+  this.xRateLimitRemaining = 40
 }
 
 /**
@@ -45,7 +47,7 @@ DataStream.prototype._reachCallLimit = function (stream) {
   let counter = 0
   stream.on('data', () => {
     counter += 1
-    counter === limit ? stream.emit('end') : setImmediate(() => stream.emit('get'))
+    counter >= limit ? stream.emit('end') : setImmediate(() => stream.emit('get'))
   })
 
   return this
@@ -56,15 +58,30 @@ DataStream.prototype._reachCallLimit = function (stream) {
  * @desc Calls API using callApi function, after done emits 'data' event with data object
 */
 DataStream.prototype._requestUrl = function (stream, url) {
-  callApi(url)
-    .catch((error) => {
-      console.error(new Error(`Failed to make request: ${error}`))
-    })
-    .then((data) => {
-      stream.emit('data', data)
-    })
+  if (this._validateLimitRemaining()) {
+    callApi(url)
+      .catch((error) => {
+        console.error(new Error(`Failed to make request: ${error}`))
+      })
+      .then((data) => {
+        this.xRateLimitRemaining -= 1
+        return data
+      })
+      .then((data) => {
+        stream.emit('data', data)
+      })
+  } else {
+    setTimeout(() => {
+      this.xRateLimitRemaining = 40
+      stream.emit('get')
+    }, 500)
+  }
 
   return this
+}
+
+DataStream.prototype._validateLimitRemaining = function () {
+  return this.xRateLimitRemaining > 0
 }
 
 module.exports = DataStream

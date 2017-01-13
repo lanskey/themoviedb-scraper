@@ -15,7 +15,7 @@ function callApi (url) {
         reject(new Error(`Failed to make request: ${res.statusCode}`))
       }
 
-      resolve({ body: camelCasedBody, status: res.statusCode })
+      resolve({ body: camelCasedBody, status: res.statusCode, headers: res.headers })
     })
   })
 }
