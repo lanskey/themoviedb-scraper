@@ -17,7 +17,7 @@ describe('Download movie', () => {
 
       return (
         callApi(url)
-          .then(({ results }) => {
+          .then(({ body: { results } }) => {
             expect(Array.isArray(results)).to.eql(true)
             expect(results).to.have.length.above(1)
           })

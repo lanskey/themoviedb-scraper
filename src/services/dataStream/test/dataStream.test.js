@@ -7,10 +7,11 @@ describe('DataStream', () => {
     let defaults = {}
     beforeEach(() => {
       defaults = {
-        apiKey: null,
+        apiKey: '9dee05d48efe51f51b15cc63b1fee3f5',
         limit: null,
-        url: 'http://api.themoviedb.org/3',
-        endPoint: '/discover/movie'
+        baseUrl: 'http://api.themoviedb.org/3',
+        endPoint: '/discover/movie',
+        url: `http://api.themoviedb.org/3/discover/movie?api_key=9dee05d48efe51f51b15cc63b1fee3f5`
       }
     })
 
@@ -54,7 +55,7 @@ describe('DataStream', () => {
 
       it('should emit "data" event, when data were received', (done) => {
         stream.on('data', (data) => {
-          expect(data.results.length).to.eql(1)
+          expect(data.body.results.length).to.eql(1)
           done()
         })
 

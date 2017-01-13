@@ -7,9 +7,11 @@ function runtime () {
   // TODO: Prepare a .log file which will contain downloaded movie titles
   // TODO: Attach custom uri keys to limit movies page limit, we should estimate parameters to met max of 1000 page per set(of filters)
 
-  const instance = DataStream({limit: 3}).stream()
+  const instance = DataStream({limit: 50}).stream()
+  let counter = 0
   instance.on('data', function (data) {
-    console.log('how many tiems')
+    counter += 1
+    console.log(counter, data.status)
   })
 
   instance.emit('get')

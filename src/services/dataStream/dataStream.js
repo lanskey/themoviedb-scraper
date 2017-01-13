@@ -2,25 +2,33 @@ const _ = require('lodash')
 const callApi = require('src/services/callApi')
 const EventEmitter = require('events').EventEmitter
 
+/**
+ * @class DataStream
+ * @desc Streams movies from API using EventEmitter
+ */
 function DataStream (options) {
   // allow us to create instance of DataStream constructor without 'new' keyword
   if (!(this instanceof DataStream)) { return new DataStream(options) }
 
   this.options = _.merge({
-    apiKey: null,
+    apiKey: '9dee05d48efe51f51b15cc63b1fee3f5',
     limit: null,
-    url: 'http://api.themoviedb.org/3',
-    endPoint: '/discover/movie'
+    baseUrl: 'http://api.themoviedb.org/3',
+    endPoint: '/discover/movie',
+    url: `http://api.themoviedb.org/3/discover/movie?api_key=9dee05d48efe51f51b15cc63b1fee3f5`
   }, options)
 }
 
+/**
+ * @method stream
+ * @desc Creates instance of EventEmitter and attaches custom listeners
+ */
 DataStream.prototype.stream = function () {
   const { options: { limit } } = this
   const stream = new EventEmitter()
 
   stream.on('get', () => {
-    const url = 'http://api.themoviedb.org/3/discover/movie?api_key=9dee05d48efe51f51b15cc63b1fee3f5'
-    this._requestUrl(stream, url)
+    this._requestUrl(stream, this.options.url)
   })
 
   if (_.isNumber(limit)) {
@@ -43,6 +51,10 @@ DataStream.prototype._reachCallLimit = function (stream) {
   return this
 }
 
+/**
+ * @method DataStream
+ * @desc Calls API using callApi function, after done emits 'data' event with data object
+*/
 DataStream.prototype._requestUrl = function (stream, url) {
   callApi(url)
     .catch((error) => {
