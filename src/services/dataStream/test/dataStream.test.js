@@ -50,7 +50,7 @@ describe('DataStream', () => {
         client = DataStream()
         stream = client.stream()
         const headers = {
-          'X-RateLimit-Remaining': 39
+          'X-RateLimit-Remaining': 39,
         }
         nock(baseUrl)
           .get(endpoint)
@@ -97,10 +97,6 @@ describe('DataStream', () => {
         stream.emit('get')
       })
 
-      // it should check if X-RateLimit-Remaining header > 0, before it make new request
-
-      // it should continue making request when times up.
-
       it('should update xRateLimitRemaining each time we make _requestUrl', (done) => {
         const defaultValue = client.xRateLimitRemaining
         stream.on('data', () => {
@@ -129,7 +125,8 @@ describe('DataStream', () => {
         _validateLimitRemainingSpy.restore()
       })
 
-      it('should pause when xRateLimitRemaining > 0 and call once again emit "get"', (done) => {
+      // it should wait appropriate amount of time
+      it('should pause xRateLimitRemaining > 0 and call once again emit "get"', (done) => {
         client.xRateLimitRemaining = 0
 
         stream.on('data', () => {
@@ -139,6 +136,7 @@ describe('DataStream', () => {
         })
 
         stream.emit('get')
+        const data = Date.now()
         const _requestUrlSpy = sinon.spy(DataStream.prototype, '_requestUrl')
       })
     })

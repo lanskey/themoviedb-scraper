@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const moment = require('moment')
 const callApi = require('src/services/callApi')
 const EventEmitter = require('events').EventEmitter
 
@@ -18,7 +19,8 @@ function DataStream (options) {
     url: `http://api.themoviedb.org/3/discover/movie?api_key=9dee05d48efe51f51b15cc63b1fee3f5`
   }, options)
 
-  this.xRateLimitRemaining = 40
+  this.xRateLimitRemaining = 39
+  this.xRateLimitTimeRemaining = 0
 }
 
 /**
@@ -58,24 +60,38 @@ DataStream.prototype._reachCallLimit = function (stream) {
  * @desc Calls API using callApi function, after done emits 'data' event with data object
 */
 DataStream.prototype._requestUrl = function (stream, url) {
-  if (this._validateLimitRemaining()) {
+
+  if (!this.isDelayed) {
     callApi(url)
       .catch((error) => {
-        console.error(new Error(`Failed to make request: ${error}`))
+        if (error.status === 429) {
+          this._delayRequest(stream, error.resetTime)
+        }
+        else {
+          console.error(new Error(`Failed to make request: ${error}`))
+        }
       })
       .then((data) => {
         this.xRateLimitRemaining -= 1
+
         return data
       })
       .then((data) => {
         stream.emit('data', data)
       })
-  } else {
-    setTimeout(() => {
-      this.xRateLimitRemaining = 40
-      stream.emit('get')
-    }, 500)
   }
+
+  return this
+}
+
+DataStream.prototype._delayRequest = function (stream, time) {
+  console.log('pause for', time ,  's')
+  this.isDelayed = true;
+  setTimeout(() => {
+    this.xRateLimitRemaining = 39
+    this.isDelayed = false;
+    stream.emit('get')
+  }, time * 1000)
 
   return this
 }

@@ -27,10 +27,10 @@ describe('Download movie', () => {
     it('Should handle 429 status code as error', () => {
       nock(baseUrl)
         .get(endpoint)
-        .reply(429, { 'message': 'request limit occur', 'statusCode': '429' })
+        .reply(429, { 'message': 'request limit occur', 'statusCode': '429'}, { 'Retry-After': '5' })
 
       return (
-        expect(callApi(url)).to.be.rejectedWith('Failed to make request')
+        expect(callApi(url)).to.be.rejectedWith('Making pause')
       )
     })
 
