@@ -1,7 +1,8 @@
 const _ = require('lodash')
-const moment = require('moment')
 const callApi = require('src/services/callApi')
 const EventEmitter = require('events').EventEmitter
+
+const { genres } = require('src/constants/api')
 
 /**
  * @class DataStream
@@ -20,6 +21,9 @@ function DataStream (options) {
   }, options)
 
   this.isDelayed = false
+  this.currentPage = 1
+  this.lastPage = null
+  this.currentUrl = this.options.url + `&with_genres=${genres[0]}`
 }
 
 /**
@@ -31,10 +35,16 @@ DataStream.prototype.stream = function () {
   const stream = new EventEmitter()
 
   stream.on('get', () => {
-    this._requestUrl(stream, this.options.url)
+    if (this.lastPage === null) {
+      // get last page
+      this._lastPage()
+      return
+    }
+
+    this._requestUrl(stream, `${this.options.url}&page=${this.currentPage}&with_genres=${genres[0]}&`)
   })
 
-  if (_.isNumber(limit)) {
+  if (_.isNumber(limit) || limit === 'MAX') {
     this._reachCallLimit(stream)
   }
 
@@ -43,11 +53,13 @@ DataStream.prototype.stream = function () {
 }
 
 DataStream.prototype._reachCallLimit = function (stream) {
-  const { options: { limit } } = this
-
   let counter = 0
   stream.on('data', () => {
+    const limit = this.options.limit === 'MAX' ? this.lastPage : this.options.limit
+
+    console.log(limit)
     counter += 1
+    this.currentPage += 1
     counter >= limit ? stream.emit('end') : setImmediate(() => stream.emit('get'))
   })
 
@@ -71,7 +83,7 @@ DataStream.prototype._requestUrl = function (stream, url) {
         }
       })
       .then(data => {
-        console.log('Dane?')
+        console.log('pobrano dane ze strony: ', this.currentPage)
         stream.emit('data', data)
       })
   }
@@ -80,8 +92,7 @@ DataStream.prototype._requestUrl = function (stream, url) {
 }
 
 DataStream.prototype._delayRequest = function (stream, time) {
-  console.log('Delay?')
-  console.log('pause for', time,  's')
+  console.log('pause for', time, 's')
   this.isDelayed = true
 
   setTimeout(() => {
@@ -90,6 +101,27 @@ DataStream.prototype._delayRequest = function (stream, time) {
   }, time * 1000)
 
   return this
+}
+
+DataStream.prototype._lastPage = function () {
+  callApi(this.currentUrl + '&page=1000')
+    .catch((error) => {
+      if (error.status === 429) {
+        this._delayRequest(this.streamInstance, error.resetTime)
+      } else {
+        console.log(error)
+        console.error(new Error(`Failed to make request: ${error}`))
+      }
+    })
+    .then(data => {
+      console.log('ostatnia strona:', data.body.totalPages)
+
+      this.lastPage = data.body.totalPages
+      setTimeout(() => {
+        console.log('Ponawiam zadanie')
+        this.streamInstance.emit('get')
+      }, 2000)
+    })
 }
 
 module.exports = DataStream
