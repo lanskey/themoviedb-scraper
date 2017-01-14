@@ -42,7 +42,6 @@ describe('DataStream', () => {
       beforeEach(() => {
         client = DataStream()
         stream = client.stream()
-
       })
 
       it('should have stream method, which is instance of eventEmitter', () => {
