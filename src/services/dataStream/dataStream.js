@@ -83,7 +83,7 @@ DataStream.prototype._requestUrl = function (stream, url) {
         }
       })
       .then(data => {
-        console.log('pobrano dane ze strony: ', this.currentPage)
+        console.log('get data from page: ', this.currentPage)
         stream.emit('data', data)
       })
   }
@@ -114,11 +114,11 @@ DataStream.prototype._lastPage = function () {
       }
     })
     .then(data => {
-      console.log('ostatnia strona:', data.body.totalPages)
+      console.log('Last page:', data.body.totalPages)
 
       this.lastPage = data.body.totalPages
       setTimeout(() => {
-        console.log('Ponawiam zadanie')
+        console.log('resume request')
         this.streamInstance.emit('get')
       }, 2000)
     })

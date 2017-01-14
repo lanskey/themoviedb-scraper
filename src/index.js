@@ -1,10 +1,9 @@
 const DataStream = require('./services/dataStream')
 const { logger, getDate } = require('utils/helpers')
 
-
-
 function runtime () {
   // TODO: Attach custom uri keys to limit movies page limit, we should estimate parameters to met max of 1000 page per set(of filters)
+  // TODO: Improve constructing urls for calls
 
   const instance = DataStream({limit: 'MAX'}).stream()
 
