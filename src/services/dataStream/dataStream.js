@@ -19,8 +19,7 @@ function DataStream (options) {
     url: `http://api.themoviedb.org/3/discover/movie?api_key=9dee05d48efe51f51b15cc63b1fee3f5`
   }, options)
 
-  this.xRateLimitRemaining = 39
-  this.xRateLimitTimeRemaining = 0
+  this.isDelayed = false
 }
 
 /**
@@ -60,23 +59,19 @@ DataStream.prototype._reachCallLimit = function (stream) {
  * @desc Calls API using callApi function, after done emits 'data' event with data object
 */
 DataStream.prototype._requestUrl = function (stream, url) {
-
   if (!this.isDelayed) {
     callApi(url)
       .catch((error) => {
+        console.log('Error?')
         if (error.status === 429) {
           this._delayRequest(stream, error.resetTime)
-        }
-        else {
+        } else {
+          console.log(error)
           console.error(new Error(`Failed to make request: ${error}`))
         }
       })
-      .then((data) => {
-        this.xRateLimitRemaining -= 1
-
-        return data
-      })
-      .then((data) => {
+      .then(data => {
+        console.log('Dane?')
         stream.emit('data', data)
       })
   }
@@ -85,19 +80,16 @@ DataStream.prototype._requestUrl = function (stream, url) {
 }
 
 DataStream.prototype._delayRequest = function (stream, time) {
-  console.log('pause for', time ,  's')
-  this.isDelayed = true;
+  console.log('Delay?')
+  console.log('pause for', time,  's')
+  this.isDelayed = true
+
   setTimeout(() => {
-    this.xRateLimitRemaining = 39
-    this.isDelayed = false;
+    this.isDelayed = false
     stream.emit('get')
   }, time * 1000)
 
   return this
-}
-
-DataStream.prototype._validateLimitRemaining = function () {
-  return this.xRateLimitRemaining > 0
 }
 
 module.exports = DataStream

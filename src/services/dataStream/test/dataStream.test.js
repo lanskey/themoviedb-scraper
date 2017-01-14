@@ -32,13 +32,6 @@ describe('DataStream', () => {
       const result = Object.assign(defaults, newOptions)
       expect(client.options).to.be.eql(result)
     })
-
-    it('instance should contain xRateLimitRemaining variable by default to 40', () => {
-      const client = DataStream()
-      expect(client).to.deep.eql(DataStream())
-
-      expect(client.xRateLimitRemaining).to.be.eql(40)
-    })
   })
 
   describe('Methods', () => {
@@ -49,13 +42,7 @@ describe('DataStream', () => {
       beforeEach(() => {
         client = DataStream()
         stream = client.stream()
-        const headers = {
-          'X-RateLimit-Remaining': 39,
-        }
-        nock(baseUrl)
-          .get(endpoint)
-          .query(true)
-          .reply(200, { results: [ {} ] }, headers)
+
       })
 
       it('should have stream method, which is instance of eventEmitter', () => {
@@ -63,6 +50,14 @@ describe('DataStream', () => {
       })
 
       it('should emit "data" event, when data were received', (done) => {
+        const headers = {
+          'X-RateLimit-Remaining': 39,
+        }
+        nock(baseUrl)
+          .get(endpoint)
+          .query(true)
+          .reply(200, { results: [ {} ] }, headers)
+
         stream.on('data', (data) => {
           expect(data.body.results.length).to.eql(1)
           done()
@@ -82,62 +77,34 @@ describe('DataStream', () => {
       })
 
       it('should emit "done" event, when limit were reached', (done) => {
-        limit = 2
-        client = DataStream({ limit })
-        stream = client.stream()
+        nock(baseUrl)
+          .get(endpoint)
+          .query(true)
+          .reply(200, { results: [ {} ] })
+        const spyGet = sinon.spy(DataStream.prototype, '_requestUrl')
 
-        const spyGet = sinon.spy()
-        stream.on('get', spyGet)
-
-        stream.on('end', () => {
-          expect(spyGet.callCount).to.eql(limit)
-          done()
-        })
-
-        stream.emit('get')
-      })
-
-      it('should update xRateLimitRemaining each time we make _requestUrl', (done) => {
-        const defaultValue = client.xRateLimitRemaining
         stream.on('data', () => {
-          try {
-            expect(client.xRateLimitRemaining).to.eql(defaultValue - 1)
-            done()
-          }
-          catch (err) {
-            done(err)
-          }
-        })
-        stream.emit('get')
-      })
-
-      it('should validate xRateLimitRemaining, before it make new request', (done) => {
-        client.xRateLimitRemaining = 0
-        const _validateLimitRemainingSpy = sinon.spy(DataStream.prototype, '_validateLimitRemaining')
-
-        stream.once('get', () => {
-          expect(_validateLimitRemainingSpy.calledOnce).to.eql(true)
+          expect(spyGet.callCount).to.eql(1)
+          spyGet.restore()
           done()
         })
 
         stream.emit('get')
-
-        _validateLimitRemainingSpy.restore()
       })
 
-      // it should wait appropriate amount of time
       it('should pause xRateLimitRemaining > 0 and call once again emit "get"', (done) => {
-        client.xRateLimitRemaining = 0
+        nock(baseUrl)
+          .get(endpoint)
+          .query(true)
+          .reply(429, { 'message': 'request limit occur', 'statusCode': '429' }, { 'Retry-After': '5' })
 
+        const _delayRequestSpy = sinon.spy(DataStream.prototype, '_delayRequest')
         stream.on('data', () => {
-          expect(_requestUrlSpy.calledTwice).to.eql(true)
-          _requestUrlSpy.restore()
+          expect(_delayRequestSpy.callCount).to.eql(1)
           done()
         })
 
         stream.emit('get')
-        const data = Date.now()
-        const _requestUrlSpy = sinon.spy(DataStream.prototype, '_requestUrl')
       })
     })
   })

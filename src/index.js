@@ -1,20 +1,18 @@
 const DataStream = require('./services/dataStream')
+const { logger, getDate } = require('utils/helpers')
 
 function runtime () {
-  // TODO: validate X-RateLimit-Remaining header and if > 0, run another 'callApi',
-  //  else wait appropriate amount of time returned by X-RateLimit-Reset header
-
-  // TODO: Prepare a .log file which will contain downloaded movie titles
   // TODO: Attach custom uri keys to limit movies page limit, we should estimate parameters to met max of 1000 page per set(of filters)
 
-  const instance = DataStream({limit: 100}).stream()
+  const instance = DataStream({limit: 1}).stream()
   let counter = 0
-  instance.on('data', function (data) {
+  instance.on('data', function ({ body }) {
     counter += 1
-    console.log(counter)
+    body.results.forEach((item) => {
+      logger.info(`${getDate()}:  ${item.original_title}`)
+    })
   })
 
-  instance.emit('get')
   instance.emit('get')
 }
 
