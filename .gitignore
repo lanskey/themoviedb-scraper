@@ -62,3 +62,4 @@ jspm_packages
 README.md
 /coverage/
 !/.travis.yml
+!/README.md
