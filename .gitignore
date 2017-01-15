@@ -60,3 +60,5 @@ jspm_packages
 .idea/shelf/
 .idea/workspace.xml
 README.md
+/coverage/
+!/.travis.yml
