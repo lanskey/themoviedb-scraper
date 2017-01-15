@@ -1,5 +1,5 @@
 {
-  "name": "zxresult-scrapper",
+  "name": "themoviedb-scraper",
   "version": "0.0.1",
   "description": "get movies",
   "main": "server.js",
