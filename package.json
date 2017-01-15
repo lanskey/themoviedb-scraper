@@ -7,7 +7,7 @@
     "start": "cross-env NODE_ENV=test NODE_PATH=. nodemon server.js",
     "test": "cross-env NODE_PATH=. mocha --recursive --ui bdd ./src/**/*.test.js ./test/**/*.test.js",
     "test:single": "cross-env NODE_PATH=. istanbul cover -x *.test.js ./node_modules/mocha/bin/_mocha --recursive --ui bdd ./src/**/*.test.js ./test/**/*.test.js",
-    "coverage": "cat ./coverage/lcov-report/lcov.info | coveralls"
+    "coverage": "cat ./coverage/lcov.info | coveralls"
   },
   "author": "Emanuel Slotwinski",
   "license": "ISC",
