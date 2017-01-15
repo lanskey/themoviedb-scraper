@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const callApi = require('src/services/callApi')
 const EventEmitter = require('events').EventEmitter
+const URL = require('url-parse')
 
 const { genres } = require('src/constants/api')
 
@@ -16,14 +17,51 @@ function DataStream (options) {
     apiKey: '9dee05d48efe51f51b15cc63b1fee3f5',
     limit: null,
     baseUrl: 'http://api.themoviedb.org/3',
-    endPoint: '/discover/movie',
-    url: `http://api.themoviedb.org/3/discover/movie?api_key=9dee05d48efe51f51b15cc63b1fee3f5`
+    endPoint: '/discover/movie'
   }, options)
 
   this.isDelayed = false
   this.currentPage = 1
   this.lastPage = null
-  this.currentUrl = this.options.url + `&with_genres=${genres[0]}`
+}
+
+DataStream.prototype._prepareUrl = function () {
+  const { baseUrl, endPoint } = this.options
+  // it should get baseUrl, endPoint, apiKey and create single url from it
+  // it should extend this url using custom uri params, like: page or with_genres
+  this.url = URL(`${baseUrl}${endPoint}`)
+  this.route = this.url.href
+  this._prepareQuery()
+
+  return this
+}
+
+DataStream.prototype._prepareQuery = function () {
+  const { apiKey } = this.options
+  this.query = { 'api_key': apiKey }
+  this._updateQuery()
+
+  return this
+}
+
+DataStream.prototype._removeFromQuery = function (what) {
+  this.query = _.omit(this.query, what)
+  this._updateQuery()
+
+  return this
+}
+
+DataStream.prototype._addToQuery = function (what) {
+  this.query = _.assign(this.query, what)
+  this._updateQuery()
+
+  return this
+}
+
+DataStream.prototype._updateQuery = function () {
+  this.url.set('query', this.query)
+
+  return this
 }
 
 /**
@@ -35,18 +73,18 @@ DataStream.prototype.stream = function () {
   const stream = new EventEmitter()
 
   stream.on('get', () => {
-    if (this.lastPage === null) {
-      // get last page
-      this._lastPage()
-      return
-    }
-
-    this._requestUrl(stream, `${this.options.url}&page=${this.currentPage}&with_genres=${genres[0]}&`)
+    // if (this.lastPage === null) {
+    //   // get last page
+    //   this._lastPage()
+    //   return
+    // }
+    this._prepareUrl()
+    this._requestUrl(stream, this.route)
   })
 
-  if (_.isNumber(limit) || limit === 'MAX') {
-    this._reachCallLimit(stream)
-  }
+  // if (_.isNumber(limit) || limit === 'MAX') {
+  //   this._reachCallLimit(stream)
+  // }
 
   this.streamInstance = stream
   return this.streamInstance
@@ -72,13 +110,13 @@ DataStream.prototype._reachCallLimit = function (stream) {
 */
 DataStream.prototype._requestUrl = function (stream, url) {
   if (!this.isDelayed) {
+    console.log('should make request')
     callApi(url)
       .catch((error) => {
         console.log('Error?')
         if (error.status === 429) {
           this._delayRequest(stream, error.resetTime)
         } else {
-          console.log(error)
           console.error(new Error(`Failed to make request: ${error}`))
         }
       })
@@ -115,12 +153,12 @@ DataStream.prototype._lastPage = function () {
     })
     .then(data => {
       console.log('Last page:', data.body.totalPages)
-
       this.lastPage = data.body.totalPages
+
       setTimeout(() => {
         console.log('resume request')
         this.streamInstance.emit('get')
-      }, 2000)
+      }, 1500)
     })
 }
 
